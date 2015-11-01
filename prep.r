@@ -3,19 +3,20 @@
 
 # set up directories
 dir <- getwd()
-if !dir.exists(file.path(dir, 'data')) {
+if(!dir.exists(file.path(dir, 'data'))) {
 	dir.create(file.path(dir, 'data'))
 }
-if !dir.exists(file.path(dir, 'output')) {
+if(!dir.exists(file.path(dir, 'output'))) {
 	dir.create(file.path(dir, 'output'))
 }
 
 # libraries
+library(devtools)
 library(readxl)
 library(maps)
 library(ggplot2)
 library(reshape2)
-source('https://github.com/mhoover/state_child_abuse/blob/master/functions.r')
+install_github('state_child_abuse/FormatFunctions', 'mhoover')
 
 # get data
 pops <- read.csv(url('https://www.census.gov/popest/data/national/totals/2014/files/NST-EST2014-popchg2010_2014.csv'), 

@@ -11,5 +11,7 @@ And, not per se a child abuse advocacy organization, but a great organization wo
 # What's here
 This repo includes a couple of scripts to grab and clean data from the U.S. Census and elsewhere, then run some very simple (purposely done so... more could certainly be done) regressions and some maps about state-level child abuse. 
 
+There is also an R package I wrote to handle some of the data import and formatting work. This will be needed to be able to run the scripts as written.
+
 # Contact
 If you're interested in doing something more here, give me a shout at matthew.a.hoover at gmail.com.

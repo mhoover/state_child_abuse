@@ -1,0 +1,11 @@
+Package: FormatFunctions
+Title: Format Data Nicely
+Version: 0.1.0
+Authors@R: person("Matthew", "Hoover", email = "matthew.a.hoover@gmail.com", role = c("aut", "cre"))
+Description: Provides functionality to format data for import, export, and all
+    matter in between.
+Depends:
+    R (>= 3.2.2)
+License: GPL-3
+LazyData: true
+RoxygenNote: 5.0.0.9000
