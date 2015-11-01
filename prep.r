@@ -16,19 +16,22 @@ library(readxl)
 library(maps)
 library(ggplot2)
 library(reshape2)
-install_github('state_child_abuse/FormatFunctions', 'mhoover')
+if(!('FormatFunctions' %in% rownames(installed.packages()))) {
+	install_github('mhoover/state_child_abuse/FormatFunctions')
+}
+library(FormatFunctions)
 
 # get data
 pops <- read.csv(url('https://www.census.gov/popest/data/national/totals/2014/files/NST-EST2014-popchg2010_2014.csv'), 
                  header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
-abuse_url <- get_excel_data('http://www.acf.hhs.gov/sites/default/files/cb/cm2012_table3_4.xlsx')
+abuse_url <- get_excel_url('http://www.acf.hhs.gov/sites/default/files/cb/cm2012_table3_4.xlsx')
 d <- read_excel(abuse_url, skip = 2)
 
-perps_url <- get_excel_data('http://www.acf.hhs.gov/sites/default/files/cb/cm2012_table5_1.xlsx')
+perps_url <- get_excel_url('http://www.acf.hhs.gov/sites/default/files/cb/cm2012_table5_1.xlsx')
 perps <- read_excel(perps_url, skip = 1)
 
-census <- read.csv(paste(dir, "data/census_regions.csv", sep = ''), 
+census <- read.csv(paste(dir, "/data/census_regions.csv", sep = ''), 
                    header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
 # load map data

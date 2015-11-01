@@ -9,6 +9,8 @@ The tragedy is that child abuse does happen and that means it is happening too m
 And, not per se a child abuse advocacy organization, but a great organization working on behalf of all children, [The Children's Defense Fund](http://www.childrensdefense.org).
 
 # What's here
+*Currently, the prep script does not fully work.* It has been (partially) rewritten for GitHub and therefore still needs some tweaks before it works correctly. 
+
 This repo includes a couple of scripts to grab and clean data from the U.S. Census and elsewhere, then run some very simple (purposely done so... more could certainly be done) regressions and some maps about state-level child abuse. 
 
 There is also an R package I wrote to handle some of the data import and formatting work. This will be needed to be able to run the scripts as written.
