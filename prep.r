@@ -4,10 +4,10 @@
 # set up directories
 dir <- getwd()
 if(!dir.exists(file.path(dir, 'data'))) {
-	dir.create(file.path(dir, 'data'))
+    dir.create(file.path(dir, 'data'))
 }
 if(!dir.exists(file.path(dir, 'output'))) {
-	dir.create(file.path(dir, 'output'))
+    dir.create(file.path(dir, 'output'))
 }
 
 # libraries
@@ -17,7 +17,7 @@ library(maps)
 library(ggplot2)
 library(reshape2)
 if(!('FormatFunctions' %in% rownames(installed.packages()))) {
-	install_github('mhoover/state_child_abuse/FormatFunctions')
+    install_github('mhoover/state_child_abuse/FormatFunctions')
 }
 library(FormatFunctions)
 
@@ -38,15 +38,23 @@ census <- read.csv(paste(dir, "/data/census_regions.csv", sep = ''),
 states <- map_data("state")
 
 # data cleaning
+d <- d[-53:-55, -which(names(d) == '')]
+names(d) <- c('state', paste0('total', 2008:2012), paste0('rate', 2008:2012))
 d$state <- gsub("\\s+$", "", tolower(d$state))
 d[, 2:6] <- apply(d[, 2:6], 2, function(x) {as.numeric(gsub(",", "", x))})
-d$nbr12.thousand[d$state == "idaho"] <- apply(d[d$state == "idaho", 2:5], 1, 
-	mean) / mean(as.numeric(d[d$state == "idaho", 2:5] / d[d$state == "idaho", 
-	7:10]))
+d$rate2012[d$state == "idaho"] <- apply(d[d$state == "idaho", 2:5], 1, 
+    mean) / mean(as.numeric(d[d$state == "idaho", 2:5] / d[d$state == "idaho", 
+    7:10]))
+
+perps <- perps[-53:-54, ]
+names(perps) <- c('state', 'perps')
 perps$state <- gsub("\\s+$", "", tolower(d$state))
 perps$perps <- as.numeric(gsub(",", "", perps$perps))
-pops$state <- gsub("\\.", "", tolower(pops$state))
-pops[, 2:4] <- apply(pops[, 2:4], 2, function(x) {as.numeric(gsub(",", "", x))})
+
+pops <- pops[6:57, grep('(?i)name|popestimate', names(pops))]
+names(pops) <- c('state', paste0('pop', 2010:2014))
+pops$state <- tolower(pops$state)
+pops[, 2:6] <- apply(pops[, 2:6], 2, function(x) {as.numeric(gsub(",", "", x))})
 
 # merge in census region classifications
 d <- merge(d, census, by = "state", all.x = TRUE)
@@ -55,7 +63,7 @@ d$census <- factor(d$census, levels = c("south", "northeast", "midwest",
 
 # create population perpetrator percentages
 perps <- merge(perps, pops[, c(1, 4)], by = "state")
-perps$pct.perps <- perps$perps / perps$yr12
+perps$pct.perps <- perps$perps / perps$pop2012
 
 # merge plotting data with map data
 states <- merge(states, d[, c(1, 7:11)], by.x = "region", by.y = "state")
@@ -93,24 +101,24 @@ fig2 <- ggplot(data = subset(states, variable == "perps"), aes(x = long,
 
 # regressions
 census.reg <- data.frame(var = c("Intercept", "Northeast", "Midwest", "West"), 
-	yr08 = reg_output("nbr08.thousand", "census", d), 
-	yr09 = reg_output("nbr09.thousand", "census", d), 
-	yr10 = reg_output("nbr10.thousand", "census", d), 
-	yr11 = reg_output("nbr11.thousand", "census", d), 
-	yr12 = reg_output("nbr12.thousand", "census", d))
+	yr08 = reg_output("rate2008", "census", d), 
+	yr09 = reg_output("rate2009", "census", d), 
+	yr10 = reg_output("rate2010", "census", d), 
+	yr11 = reg_output("rate2011", "census", d), 
+	yr12 = reg_output("rate2012", "census", d))
 south.reg <- data.frame(var = c("Intercept", "South"), 
-	yr08 = reg_output("nbr08.thousand", "south", d), 
-	yr09 = reg_output("nbr09.thousand", "south", d), 
-	yr10 = reg_output("nbr10.thousand", "south", d), 
-	yr11 = reg_output("nbr11.thousand", "south", d), 
-	yr12 = reg_output("nbr12.thousand", "south", d))
+	yr08 = reg_output("rate2008", "south", d), 
+	yr09 = reg_output("rate2009", "south", d), 
+	yr10 = reg_output("rate2010", "south", d), 
+	yr11 = reg_output("rate2011", "south", d), 
+	yr12 = reg_output("rate2012", "south", d))
 
 # create output
-write.table(census.reg, file = "census_regression.csv", sep = ",", 
-	row.names = FALSE, col.names = TRUE)
-write.table(south.reg, file = "south_regression.csv", sep = ",", 
-	row.names = FALSE, col.names = TRUE)
-pdf("state_abuse_maps.pdf")
+write.table(census.reg, file = paste(dir, "output/census_regression.csv", 
+            sep = "/"), sep = ",", row.names = FALSE, col.names = TRUE)
+write.table(south.reg, file = paste(dir, "output/south_regression.csv", 
+            sep = "/"), sep = ",", row.names = FALSE, col.names = TRUE)
+pdf(paste(dir, "output/state_abuse_maps.pdf", sep = "/"))
 	print(fig1)
 	print(fig2)
 dev.off()
